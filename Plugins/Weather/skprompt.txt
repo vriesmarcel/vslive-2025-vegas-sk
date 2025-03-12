@@ -1,0 +1,1 @@
+﻿Tell a story about the weather in {{$input}}
