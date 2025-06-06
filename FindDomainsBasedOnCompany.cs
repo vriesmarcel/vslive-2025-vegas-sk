@@ -51,7 +51,7 @@ namespace UseSemanticKernelFromNET
                 
                 ChatHistory chatHistory = new();
                 chatHistory.AddSystemMessage(prompt); 
-                chatHistory.AddUserMessage(company);
+                chatHistory.AddUserMessage($"company=\"{company.CompanyName}\" countrycode= \"{company.BillingCountry}\"");
                 try {
                     var assistantMessage = await chatCompletionService.GetChatMessageContentAsync(chatHistory, settings, kernel);
                     Console.WriteLine(assistantMessage);
@@ -76,10 +76,10 @@ namespace UseSemanticKernelFromNET
         public void UpdateExcellSheet(/*StringBuilder resultingjson*/)
         {
             //read json file from disk and update the excel sheet with the domain names found
-            var jsonfile = "C:\\Users\\vries\\Downloads\\UseSemanticKernelFromNET\\UseSemanticKernelFromNET\\TextFile1.json";
+            var jsonfile = "C:\\Users\\vries\\Downloads\\TextFile2.json";
             var jsonstring = File.ReadAllText(jsonfile);
             var allCompanies = JsonSerializer.Deserialize<DomainLookup[]>(jsonstring.ToString());
-            var sheet = "C:\\Users\\vries\\Downloads\\XEBIA.-EMEAxlsx.xlsx";
+            var sheet = "C:\\Users\\vries\\Downloads\\USE THIS LIST- Xebia (US) - PVG Target List-2.xlsx";
             var connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={sheet};Extended Properties='Excel 12.0;HDR=YES;'";
             var connection = new OleDbConnection(connectionString);
             connection.Open();
@@ -100,24 +100,29 @@ namespace UseSemanticKernelFromNET
             }
         }
 
-        private IEnumerable<string> GetCompaniesFromExcel()
+        private IEnumerable<company> GetCompaniesFromExcel()
         {
-            var sheet = "C:\\Users\\vries\\Downloads\\XEBIA.-EMEAxlsx.xlsx";
+            var sheet = "C:\\Users\\vries\\Downloads\\USE THIS LIST- Xebia (US) - PVG Target List-2.xlsx";
             var connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={sheet};Extended Properties='Excel 12.0;HDR=YES;'";
             // Rest of the code...
-            var list = new List<string>();
+            var list = new List<company>();
            var connection = new OleDbConnection(connectionString);
             connection.Open();
             // Assuming the company names are in the "AccountName" column of the first sheet
-            var query = "SELECT Account FROM [data$]";
+            var query = "SELECT [Account], [Billing Country]  FROM [data$]";
             using (var command = new OleDbCommand(query, connection))
             {
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
+
                         var companyName = reader["Account"].ToString();
-                        list.Add(companyName);
+                        var BillingCountry = reader["Billing Country"].ToString();
+                        list.Add(new company() { 
+                             CompanyName = companyName,
+                             BillingCountry = BillingCountry
+                        });
                     }
                 }
             }
@@ -133,4 +138,9 @@ namespace UseSemanticKernelFromNET
         public string domain { get; set; }
     }
 
+    public class company
+    {
+        public string CompanyName { get; set; }
+        public string BillingCountry { get; set; }
+    }
 }
