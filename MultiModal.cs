@@ -21,7 +21,7 @@ using UseSemanticKernelFromNET.Plugins;
                 You need to analyze the image and give information about the highlighted area and you provide at least two tips where 
                 you can find good restaurants.
                 """;
-            string imgUrl = "https://raw.githubusercontent.com/XpiritCommunityEvents/attendeello-vriesmarcel/main/NL-Map-Highlight.png";
+            string imgUrl = "https://raw.githubusercontent.com/vriesmarcel/vslive-2025-vegas-sk/refs/heads/main/NL-Map-Highlight.png";
 
     
 
