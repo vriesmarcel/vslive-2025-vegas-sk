@@ -26,34 +26,16 @@ namespace UseSemanticKernelFromNET
             // Create a kernel with OpenAI chat completion
             IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
             kernelBuilder.AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
-            kernelBuilder.Services.AddSingleton<IFunctionInvocationFilter, ApprovalFilterExample>();
-            kernelBuilder.Services.AddLogging(
-                        s => s.AddConsole().SetMinimumLevel(LogLevel.Trace));
-
+            
             Kernel kernel = kernelBuilder.Build();
-
-           // var memoryConnector = GetMemoryConnector(deploymentName, endpoint, apiKey);
+            //ingest the document
             var memoryConnector = GetLocalKernelMemory(deploymentName, endpoint, apiKey);
             var importResult = await memoryConnector.ImportDocumentAsync(filePath: DocFilename, documentId: "MSFT01");
             
-            //var memoryPlugin = kernel.ImportPluginFromObject(new MemoryPlugin(memoryConnector, waitForIngestionToComplete: true), "memory");
-
-            //var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
-            //ChatHistory chatHistory = new();
-            //chatHistory.AddSystemMessage("You are an AI that awnsers questions about documents that have been uploaded to your memory. you can call the memory plugin to retrieve this information. ");
             var prompt = "How many customer cases do we need accoring to version 1.5 of the program guide, to get the advanced specification for infrastructure and database from microsoft.";
-            //chatHistory.AddUserMessage(prompt);
-            //OpenAIPromptExecutionSettings settings = new() { 
-            //    ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
-            //    Temperature = 0.1,
-            //    TopP = 0.1
-            //};
       
-            //var response = await chatCompletionService.GetChatMessageContentAsync(chatHistory, settings, kernel);
             var memoryResult = await memoryConnector.AskAsync(prompt);
-            //Console.WriteLine("******** Response from Chat client***********");
-            //Console.WriteLine(response);
-
+   
             Console.WriteLine("******** Response from Kernel Memory ***********");
             Console.WriteLine(memoryResult);
         

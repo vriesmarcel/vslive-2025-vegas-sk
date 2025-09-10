@@ -47,8 +47,13 @@ string dal_e_apiKey = config.GetSection("OpenAI").GetValue<string>("DalE-ApiKey"
 //string memory_ip = config.GetSection("SM").GetValue<string>("ip") ?? throw new ArgumentException("Semeantic Memory http location not set");
 
 //6. Memory (RAG)
-await new UsingMemory().ChatWithMemory(deploymentName, endpoint, apiKey);
+//await new UsingMemory().ChatWithMemory(deploymentName, endpoint, apiKey);
 
+//7. MCP
+//await new ChatWithMCP().ChatWithGitHubMCP(deploymentName, endpoint, apiKey);
+var pattToken = config.GetSection("mcp").GetValue<string>("git_mcp_pat_token") ?? throw new ArgumentException("git_mcp_pat_token not set");
+
+await new ChatWithMCP().ChatCreateIssueViaMCP(deploymentName, endpoint, apiKey, pattToken);
 
 
 
